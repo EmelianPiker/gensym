@@ -46,8 +46,12 @@ pub fn detsym(input: TokenStream) -> TokenStream {
 fn alter_macro(mut mcall: syn::Macro) -> Result<proc_macro2::TokenStream, syn::Error> {
     use core::iter::Extend;
     use quote::ToTokens;
-    let namespace = Uuid::parse_str("000000001111111111d2d3d4d5d6d7d8").unwrap();
+    let namespace_a = Uuid::parse_str("000000001111111111d2d3d4d5d6d7d8").unwrap();
+    let path = Span::call_site().source_file().path();
+    let path_bytes = path.as_path().to_str().unwrap().as_bytes();
+    let namespace = Uuid::new_v5(&namespace_a, path_bytes);
     let seed: String = format!("{}", mcall.tts);
+
 
     let sym = syn::Ident::new(
         &format!("__detsym_{}", Uuid::new_v5(&namespace, seed.as_bytes()).to_simple()).to_uppercase(),

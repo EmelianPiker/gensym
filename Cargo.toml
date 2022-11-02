@@ -1,3 +1,5 @@
+cargo-features = ["profile-rustflags"]
+
 [package]
 name = "detsym"
 version = "0.1.0"
@@ -8,6 +10,12 @@ documentation = "https://docs.rs/gensym/0.1.0/gensym/"
 license = "MIT OR Apache-2.0"
 readme = "README.md"
 edition = "2018"
+
+[profile.dev]
+rustflags = ["--cfg", "procmacro2_semver_exempt"]
+
+[profile.release]
+rustflags = ["--cfg", "procmacro2_semver_exempt"]
 
 [lib]
 path = "src/lib.rs"
