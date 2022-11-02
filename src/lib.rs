@@ -4,13 +4,13 @@
 //!
 //! macro_rules! gen_fn {
 //!     ($a:ty, $b:ty) => {
-//!         gensym::gensym!{ _gen_fn!{ $a, $b } }
+//!         detsym::detsym!{ _gen_fn!{ $a, $b } }
 //!     };
 //! }
 //!
 //! macro_rules! _gen_fn {
-//!     ($gensym:ident, $a:ty, $b:ty) => {
-//!         fn $gensym(a: $a, b: $b) {
+//!     ($detsym:ident, $a:ty, $b:ty) => {
+//!         fn $detsym(a: $a, b: $b) {
 //!             unimplemented!()
 //!         }
 //!     };
@@ -18,7 +18,7 @@
 //!
 //! mod test {
 //!     gen_fn!{ u64, u64 }
-//!     gen_fn!{ u64, u64 }
+//!     gen_fn!{ u32, u32 }
 //! }
 //! ```
 extern crate proc_macro;
@@ -31,7 +31,7 @@ use syn::{parse_macro_input, parse_quote};
 use uuid::Uuid;
 
 #[proc_macro]
-pub fn gensym(input: TokenStream) -> TokenStream {
+pub fn detsym(input: TokenStream) -> TokenStream {
     //! Generate a unique identifier with a span of `Span::call_site` and
     //! insert it as the first argument to a macro call followed by a comma.
 
@@ -42,19 +42,22 @@ pub fn gensym(input: TokenStream) -> TokenStream {
     )
 }
 
+
 fn alter_macro(mut mcall: syn::Macro) -> Result<proc_macro2::TokenStream, syn::Error> {
     use core::iter::Extend;
     use quote::ToTokens;
+    let namespace = Uuid::parse_str("000000001111111111d2d3d4d5d6d7d8").unwrap();
+    let seed: String = format!("{}", mcall.tts);
 
     let sym = syn::Ident::new(
-        &format!("__gensym_{}", Uuid::new_v4().to_simple()),
+        &format!("__detsym_{}", Uuid::new_v5(&namespace, seed.as_bytes()).to_simple()).to_uppercase(),
         Span::call_site(),
     );
 
-    let mut inserted_gensym: proc_macro2::TokenStream = parse_quote!(#sym, );
+    let mut inserted_detsym: proc_macro2::TokenStream = parse_quote!(#sym, );
 
-    inserted_gensym.extend(mcall.tts);
-    mcall.tts = inserted_gensym;
+    inserted_detsym.extend(mcall.tts);
+    mcall.tts = inserted_detsym;
 
     Ok(mcall.into_token_stream())
 }

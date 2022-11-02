@@ -1,5 +1,5 @@
 [package]
-name = "gensym"
+name = "detsym"
 version = "0.1.0"
 authors = ["Erlend Tobiassen <erlend.tobiassen@gmail.com>"]
 description = "Creates unique identifiers for macros using procedural macros "
@@ -14,7 +14,7 @@ path = "src/lib.rs"
 proc-macro = true
 
 [dependencies]
-uuid = { version = "0.7", features = ["v4"] }
+uuid = { version = "0.7", features = ["v5"] }
 syn = { version = "0.15", features = ["full"] }
 proc-macro2 = "0.4"
 quote = "0.6"
