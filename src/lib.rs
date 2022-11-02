@@ -54,7 +54,7 @@ fn alter_macro(mut mcall: syn::Macro) -> Result<proc_macro2::TokenStream, syn::E
 
 
     let sym = syn::Ident::new(
-        &format!("__detsym_{}", Uuid::new_v5(&namespace, seed.as_bytes()).to_simple()).to_uppercase(),
+        &format!("detsym_{}", Uuid::new_v5(&namespace, seed.as_bytes()).to_simple()).to_uppercase(),
         Span::call_site(),
     );
 
